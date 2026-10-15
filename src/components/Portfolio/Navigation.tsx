@@ -1,7 +1,7 @@
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
-const navigation = ["Home", "About", "Projects", "Skills", "Contact"];
+const navigation = ["Home", "Projects", "About", "Skills", "Contact"];
 export const Navigation = ({ websiteName }: { websiteName?: string }) => {
   const [active, setActive] = useState("home");
   const [open, setOpen] = useState(false);

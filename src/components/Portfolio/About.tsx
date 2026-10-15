@@ -19,7 +19,7 @@ const principles = [
 export const About = ({ data }: AboutProps) => (
   <section id="about" className="portfolio-section page-width">
     <SectionHeading
-      number="01"
+      number="02"
       label="About"
       title={data?.about_title || "About Me"}
     >

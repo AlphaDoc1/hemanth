@@ -118,8 +118,8 @@ const Index = () => {
           contact={contactInfo}
           featuredProject={projects[0]}
         />
-        <About data={portfolioInfo} />
         <Projects data={projects} />
+        <About data={portfolioInfo} />
         <Skills data={skills} />
         <Contact data={contactInfo} />
       </main>

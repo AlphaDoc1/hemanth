@@ -1,5 +1,5 @@
 import { Github, Linkedin, Mail, ArrowUpRight, ArrowDown } from "lucide-react";
-import { ProjectArtwork } from "./ProjectArtwork";
+
 interface HeroProps {
   data?: {
     hero_title?: string;
@@ -20,7 +20,7 @@ interface HeroProps {
     technologies: string[];
   };
 }
-export const Hero = ({ data, contact, featuredProject }: HeroProps) => {
+export const Hero = ({ data, contact }: HeroProps) => {
   const normalizeUrl = (url?: string) =>
     !url ? undefined : /^https?:\/\//.test(url) ? url : `https://${url}`;
   const title = data?.hero_title || "Creative Developer";
@@ -31,9 +31,9 @@ export const Hero = ({ data, contact, featuredProject }: HeroProps) => {
       <div className="hero-topline">
         <span className="eyebrow">
           <span className="small-star" aria-hidden="true">
-            ✳
+            ↳
           </span>{" "}
-          Software development & AI / ML
+          Independent developer / Portfolio
         </span>
         <span className="availability">
           <i aria-hidden="true" /> Available for work
@@ -98,44 +98,26 @@ export const Hero = ({ data, contact, featuredProject }: HeroProps) => {
             </div>
           </div>
         </div>
-        {featuredProject ? (
-          <a
-            className="hero-feature"
-            href={`#project-${featuredProject.id}`}
-            aria-label={`Explore ${featuredProject.title}`}
-          >
-            <div className="hero-feature-top">
-              <span className="eyebrow">From the workbench</span>
-              <ArrowUpRight size={18} />
-            </div>
-            <ProjectArtwork
-              title={featuredProject.title}
-              technologies={featuredProject.technologies}
-              image={featuredProject.image_url}
-            />
-            <div className="hero-feature-caption">
-              <div>
-                <span className="eyebrow">Selected project / 01</span>
-                <h2>{featuredProject.title}</h2>
-              </div>
-              <span className="round-arrow">
-                <ArrowUpRight size={21} />
-              </span>
-            </div>
-          </a>
-        ) : (
-          <div className="hero-empty-feature">
-            <span className="eyebrow">The approach</span>
-            <p>
-              Thoughtful systems.
-              <br />
-              Useful software.
-            </p>
-            <a className="text-action" href="#about">
-              More about me <ArrowUpRight size={18} />
-            </a>
-          </div>
-        )}
+        <div className="studio-object" aria-hidden="true">
+          <svg viewBox="0 0 500 500" fill="none">
+            <circle cx="250" cy="250" r="185" />
+            {[0, 30, 60, 90, 120, 150].map((angle) => (
+              <ellipse
+                key={angle}
+                cx="250"
+                cy="250"
+                rx="185"
+                ry="65"
+                transform={`rotate(${angle} 250 250)`}
+              />
+            ))}
+            <circle cx="250" cy="250" r="125" strokeDasharray="2 9" />
+            <path d="M250 20V70M250 430V480M20 250H70M430 250H480" />
+          </svg>
+          <span className="object-label">
+            SYSTEMS / INTERFACES / INTELLIGENCE
+          </span>
+        </div>
       </div>
       <div className="hero-bottom">
         <span className="hero-location">
