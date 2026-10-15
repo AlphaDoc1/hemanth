@@ -104,6 +104,22 @@ function SkillCategory({
       {skills.length > 5 && (
         <button
           className="text-action"
+          onClick={() => setShowAll((prev) => !prev)}
+          aria-expanded={showAll}
+          aria-controls={`skills-${id}`}
+        >
+          {showAll ? (
+            <>
+              Show less <ChevronUp size={14} />
+            </>
+          ) : (
+            <>
+              +{skills.length - 5} more <ChevronDown size={14} />
+            </>
+          )}
+        </button>
+      )}
+    </article>
   );
 }
 export const Skills = ({ data = [] }: { data?: Skill[] }) => (
