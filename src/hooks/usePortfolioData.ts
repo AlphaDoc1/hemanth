@@ -1,165 +1,149 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
+import {
+  previewPortfolio,
+  previewProjects,
+  previewSkills,
+  previewContact,
+} from "@/data/portfolioPreview";
+
+type Portfolio = Partial<Tables<"portfolio_info">> &
+  Partial<typeof previewPortfolio>;
+type Skill = Pick<Tables<"skills">, "id" | "name"> & {
+  category:
+    "aiml" | "frontend" | "backend" | "framework" | "database" | "tools";
+  percentage?: number;
+};
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  image_url?: string;
+  github_url?: string;
+  demo_url?: string;
+};
+type Content = {
+  portfolioInfo: Portfolio;
+  projects: Project[];
+  skills: Skill[];
+  contactInfo: Partial<Tables<"contact_info">>;
+};
+const preview: Content = {
+  portfolioInfo: previewPortfolio,
+  projects: previewProjects,
+  skills: previewSkills,
+  contactInfo: previewContact,
+};
 
 export function usePortfolioData() {
-  const [portfolioInfo, setPortfolioInfo] = useState<any>(null);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [skills, setSkills] = useState<any[]>([]);
-  const [contactInfo, setContactInfo] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState<Content>(preview);
+  const [source, setSource] = useState<
+    "loading" | "preview" | "live" | "unavailable"
+  >(supabase ? "loading" : "preview");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const request = useRef<AbortController | null>(null);
+  const liveContent = useRef(false);
 
-  useEffect(() => {
-    getCurrentUser();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        setCurrentUserId(session.user.id);
-      } else {
-        // When user logs out, fetch the latest portfolio data
-        setCurrentUserId(null);
+  const refetch = useCallback(async () => {
+    if (!supabase) return;
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
+    try {
+      let query = supabase.from("portfolio_info").select("*");
+      if (currentUserId) query = query.eq("user_id", currentUserId);
+      const { data: portfolio, error } = await query
+        .order("updated_at", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .abortSignal(controller.signal)
+        .maybeSingle();
+      if (controller.signal.aborted) return;
+      if (error) throw error;
+      if (!portfolio) {
+        // A successful but empty database must not look like saved sample projects.
+        setContent({
+          portfolioInfo: {},
+          projects: [],
+          skills: [],
+          contactInfo: {},
+        });
+        liveContent.current = true;
+        setSource("live");
+        return;
       }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (currentUserId) {
-      fetchAllData();
-    } else {
-      // If no user is logged in, fetch the most recent portfolio data
-      fetchLatestPortfolioData();
+      const [projects, skills, contact] = await Promise.all([
+        supabase
+          .from("projects")
+          .select("*")
+          .eq("user_id", portfolio.user_id)
+          .eq("is_featured", true)
+          .order("sort_order", { ascending: true })
+          .abortSignal(controller.signal),
+        supabase
+          .from("skills")
+          .select("*")
+          .eq("user_id", portfolio.user_id)
+          .order("category", { ascending: true })
+          .order("sort_order", { ascending: true })
+          .abortSignal(controller.signal),
+        supabase
+          .from("contact_info")
+          .select("*")
+          .eq("user_id", portfolio.user_id)
+          .abortSignal(controller.signal)
+          .maybeSingle(),
+      ]);
+      if (controller.signal.aborted) return;
+      const failure = projects.error || skills.error || contact.error;
+      if (failure) throw failure;
+      setContent({
+        portfolioInfo: portfolio,
+        projects: projects.data || [],
+        skills: (skills.data || []) as Skill[],
+        contactInfo: contact.data || {},
+      });
+      liveContent.current = true;
+      setSource("live");
+    } catch {
+      if (controller.signal.aborted) return;
+      // Keep already loaded real content during a transient refresh failure.
+      if (!liveContent.current) {
+        setContent(preview);
+        setSource("unavailable");
+      }
     }
   }, [currentUserId]);
 
-  const getCurrentUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      setCurrentUserId(session.user.id);
-    } else {
-      // If no user is logged in, fetch the latest portfolio data
-      setCurrentUserId(null);
-    }
-  };
+  useEffect(() => {
+    if (!supabase) return;
+    let active = true;
+    void supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (active) setCurrentUserId(session?.user.id || null);
+      })
+      .catch(() => {
+        /* Public reads can still work without an auth session. */
+      });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setCurrentUserId(session?.user.id || null);
+    });
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
-  const fetchLatestPortfolioData = async () => {
-    try {
-      // Fetch the most recent portfolio info
-      const { data: portfolioData } = await supabase
-        .from('portfolio_info')
-        .select('*')
-        .order('updated_at', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+  useEffect(() => {
+    void refetch();
+    return () => request.current?.abort();
+  }, [refetch]);
 
-      if (portfolioData) {
-        setPortfolioInfo(portfolioData);
-
-        // Fetch related data for this portfolio
-        const userId = portfolioData.user_id;
-
-        // Fetch projects for this user
-        const { data: projectsData } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('is_featured', true)
-          .order('sort_order', { ascending: true });
-
-        setProjects(projectsData || []);
-
-        // Fetch skills for this user
-        const { data: skillsData } = await supabase
-          .from('skills')
-          .select('*')
-          .eq('user_id', userId)
-          .order('category', { ascending: true })
-          .order('sort_order', { ascending: true });
-
-        setSkills(skillsData || []);
-
-        // Fetch contact info for this user
-        const { data: contactData } = await supabase
-          .from('contact_info')
-          .select('*')
-          .eq('user_id', userId)
-          .single();
-
-        if (contactData) {
-          setContactInfo(contactData);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching latest portfolio data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  const fetchAllData = async () => {
-    if (!currentUserId) return;
-
-    try {
-      // Fetch portfolio info for the current user
-      const { data: portfolioData } = await supabase
-        .from('portfolio_info')
-        .select('*')
-        .eq('user_id', currentUserId)
-        .maybeSingle();
-
-      if (portfolioData) {
-        setPortfolioInfo(portfolioData);
-      }
-
-      // Fetch projects for the current user
-      const { data: projectsData } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('user_id', currentUserId)
-        .eq('is_featured', true)
-        .order('sort_order', { ascending: true });
-
-      setProjects(projectsData || []);
-
-      // Fetch skills for the current user
-      const { data: skillsData } = await supabase
-        .from('skills')
-        .select('*')
-        .eq('user_id', currentUserId)
-        .order('category', { ascending: true })
-        .order('sort_order', { ascending: true });
-
-      setSkills(skillsData || []);
-
-      // Fetch contact info for the current user
-      const { data: contactData } = await supabase
-        .from('contact_info')
-        .select('*')
-        .eq('user_id', currentUserId)
-        .single();
-
-      if (contactData) {
-        setContactInfo(contactData);
-      }
-
-    } catch (error) {
-      console.error('Error fetching portfolio data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    portfolioInfo,
-    projects,
-    skills,
-    contactInfo,
-    loading,
-    refetch: fetchAllData,
-    currentUserId,
-  };
+  // Render the complete frontend immediately, then replace preview content atomically.
+  return { ...content, loading: false, source, refetch, currentUserId };
 }

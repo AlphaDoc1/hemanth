@@ -1,14 +1,25 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Upload, X, Image as ImageIcon, Crop, Check } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import ReactCrop, { Crop as CropType, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
+import React, { useState, useRef, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Upload, X, Image as ImageIcon, Crop, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import ReactCrop, {
+  Crop as CropType,
+  PixelCrop,
+  centerCrop,
+  makeAspectCrop,
+} from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 interface ImageUploadProps {
   value?: string;
@@ -20,7 +31,7 @@ interface ImageUploadProps {
   className?: string;
   aspectRatio?: number; // For cropping (e.g., 1 for square, 16/9 for landscape)
   enableCrop?: boolean; // Enable/disable cropping
-  cropShape?: 'rect' | 'round'; // Crop shape - rectangle or round
+  cropShape?: "rect" | "round"; // Crop shape - rectangle or round
 }
 
 export function ImageUpload({
@@ -33,7 +44,7 @@ export function ImageUpload({
   className = "",
   aspectRatio = 1,
   enableCrop = true,
-  cropShape = 'rect'
+  cropShape = "rect",
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
@@ -52,36 +63,43 @@ export function ImageUpload({
       return centerCrop(
         makeAspectCrop(
           {
-            unit: '%',
+            unit: "%",
             width: 90,
           },
           aspect,
           mediaWidth,
-          mediaHeight
+          mediaHeight,
         ),
         mediaWidth,
-        mediaHeight
+        mediaHeight,
       );
     },
-    []
+    [],
   );
 
   // Function to convert canvas to blob
   const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> => {
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if (blob) resolve(blob);
-      }, 'image/jpeg', 0.9);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+        },
+        "image/jpeg",
+        0.9,
+      );
     });
   };
 
   // Function to crop and convert image
-  const getCroppedImg = async (image: HTMLImageElement, crop: PixelCrop): Promise<Blob> => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+  const getCroppedImg = async (
+    image: HTMLImageElement,
+    crop: PixelCrop,
+  ): Promise<Blob> => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     if (!ctx) {
-      throw new Error('No 2d context');
+      throw new Error("No 2d context");
     }
 
     const scaleX = image.naturalWidth / image.width;
@@ -89,7 +107,7 @@ export function ImageUpload({
     const pixelRatio = window.devicePixelRatio;
 
     // Set canvas size based on crop shape
-    if (cropShape === 'round') {
+    if (cropShape === "round") {
       // For round crop, create a square canvas
       const size = Math.min(crop.width, crop.height);
       canvas.width = size * pixelRatio * scaleX;
@@ -101,7 +119,7 @@ export function ImageUpload({
     }
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    ctx.imageSmoothingQuality = 'high';
+    ctx.imageSmoothingQuality = "high";
 
     // Calculate the source position to center the crop
     const sourceX = crop.x * scaleX;
@@ -110,7 +128,7 @@ export function ImageUpload({
     const sourceHeight = crop.height * scaleY;
 
     // For round crop, create a square image (easier to crop) but it will be displayed as round
-    if (cropShape === 'round') {
+    if (cropShape === "round") {
       const sourceSize = Math.min(crop.width, crop.height) * scaleX;
       // Create a square image that will be displayed as round on the main page
       ctx.drawImage(
@@ -122,7 +140,7 @@ export function ImageUpload({
         0,
         0,
         canvas.width / pixelRatio,
-        canvas.height / pixelRatio
+        canvas.height / pixelRatio,
       );
     } else {
       // For rectangular crop, use the full crop dimensions
@@ -135,7 +153,7 @@ export function ImageUpload({
         0,
         0,
         canvas.width / pixelRatio,
-        canvas.height / pixelRatio
+        canvas.height / pixelRatio,
       );
     }
 
@@ -154,7 +172,7 @@ export function ImageUpload({
     }
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       toast({
         title: "Invalid file type",
         description: "Please select an image file",
@@ -204,15 +222,15 @@ export function ImageUpload({
     try {
       // Get the cropped image as blob
       const croppedBlob = await getCroppedImg(imgRef.current, completedCrop);
-      
+
       // Create a file from the cropped blob
-      const fileExt = originalFile?.name.split('.').pop() || 'jpg';
+      const fileExt = originalFile?.name.split(".").pop() || "jpg";
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `uploads/${fileName}`;
 
       // Upload cropped file to Supabase Storage
       const { error: uploadError } = await supabase.storage
-        .from('portfolio-images')
+        .from("portfolio-images")
         .upload(filePath, croppedBlob);
 
       if (uploadError) {
@@ -221,11 +239,11 @@ export function ImageUpload({
 
       // Get public URL
       const { data } = supabase.storage
-        .from('portfolio-images')
+        .from("portfolio-images")
         .getPublicUrl(filePath);
 
       const imageUrl = data.publicUrl;
-      
+
       setPreview(imageUrl);
       onChange(imageUrl);
       setShowCropModal(false);
@@ -267,9 +285,9 @@ export function ImageUpload({
 
   const handleRemove = () => {
     setPreview(null);
-    onChange('');
+    onChange("");
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -280,12 +298,24 @@ export function ImageUpload({
   return (
     <div className={`space-y-2 ${className}`}>
       {label && <Label>{label}</Label>}
-      
-      <Card 
+
+      <Card
         className={`border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer ${
-          uploading ? 'opacity-50 pointer-events-none' : ''
+          uploading ? "opacity-50 pointer-events-none" : ""
         }`}
         onClick={handleClick}
+        role={preview ? undefined : "button"}
+        tabIndex={preview ? undefined : 0}
+        aria-label={label}
+        onKeyDown={(event) => {
+          if (
+            event.target === event.currentTarget &&
+            (event.key === "Enter" || event.key === " ")
+          ) {
+            event.preventDefault();
+            handleClick();
+          }
+        }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
@@ -302,6 +332,7 @@ export function ImageUpload({
                   type="button"
                   variant="destructive"
                   size="sm"
+                  aria-label="Remove image"
                   className="absolute top-2 right-2"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -321,7 +352,7 @@ export function ImageUpload({
                   }}
                   disabled={uploading}
                 >
-                  {uploading ? 'Uploading...' : 'Change Image'}
+                  {uploading ? "Uploading..." : "Change Image"}
                 </Button>
               </div>
             </div>
@@ -336,11 +367,9 @@ export function ImageUpload({
               </div>
               <div>
                 <p className="text-sm font-medium">
-                  {uploading ? 'Uploading...' : 'Click to upload'}
+                  {uploading ? "Uploading..." : "Click to upload"}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {placeholder}
-                </p>
+                <p className="text-xs text-muted-foreground">{placeholder}</p>
                 <p className="text-xs text-muted-foreground">
                   Max size: {maxSize}MB
                 </p>
@@ -367,7 +396,7 @@ export function ImageUpload({
               Crop Your Image
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {cropImage && (
               <div className="flex justify-center">
@@ -390,30 +419,38 @@ export function ImageUpload({
                       }}
                     />
                   </ReactCrop>
-                  
+
                   {/* Square crop preview overlay for round crop */}
-                  {cropShape === 'round' && crop && (
-                    <div 
+                  {cropShape === "round" && crop && (
+                    <div
                       className="absolute pointer-events-none border-2 border-white shadow-lg"
                       style={{
                         left: `${crop.x}%`,
                         top: `${crop.y}%`,
                         width: `${crop.width}%`,
                         height: `${crop.height}%`,
-                        border: '3px solid #3b82f6',
-                        boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+                        border: "3px solid hsl(var(--primary))",
+                        boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
                       }}
                     />
                   )}
                 </div>
               </div>
             )}
-            
+
             <div className="text-sm text-muted-foreground text-center">
-              Drag the corners to adjust the crop area. The image will be cropped to a {cropShape === 'round' ? 'square' : aspectRatio === 1 ? 'square' : `${aspectRatio}:1`} shape.
-              {cropShape === 'round' && (
-                <div className="mt-2 text-xs text-blue-600">
-                  💡 Crop as a square - it will be displayed as a perfect circle on your portfolio
+              Drag the corners to adjust the crop area. The image will be
+              cropped to a{" "}
+              {cropShape === "round"
+                ? "square"
+                : aspectRatio === 1
+                  ? "square"
+                  : `${aspectRatio}:1`}{" "}
+              shape.
+              {cropShape === "round" && (
+                <div className="mt-2 text-xs text-primary">
+                  💡 Crop as a square - it will be displayed as a perfect circle
+                  on your portfolio
                 </div>
               )}
             </div>

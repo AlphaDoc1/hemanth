@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
-import { User } from '@supabase/supabase-js';
-import { PortfolioInfoForm } from '@/components/Admin/PortfolioInfoForm';
-import { ProjectsManager } from '@/components/Admin/ProjectsManager';
-import { SkillsManager } from '@/components/Admin/SkillsManager';
-import { ContactInfoForm } from '@/components/Admin/ContactInfoForm';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { User } from "@supabase/supabase-js";
+import { PortfolioInfoForm } from "@/components/Admin/PortfolioInfoForm";
+import { ProjectsManager } from "@/components/Admin/ProjectsManager";
+import { SkillsManager } from "@/components/Admin/SkillsManager";
+import { ContactInfoForm } from "@/components/Admin/ContactInfoForm";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -17,10 +17,16 @@ export default function Admin() {
   const { toast } = useToast();
 
   useEffect(() => {
+    if (!supabase) {
+      navigate("/auth", { replace: true });
+      return;
+    }
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/auth');
+        navigate("/auth");
         return;
       }
       setUser(session.user);
@@ -29,9 +35,11 @@ export default function Admin() {
 
     getUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
-        navigate('/auth');
+        navigate("/auth");
       } else {
         setUser(session.user);
         setLoading(false);
@@ -42,19 +50,19 @@ export default function Admin() {
   }, [navigate]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await supabase?.auth.signOut();
     toast({
       title: "Logged out",
       description: "You have been successfully logged out",
     });
-    navigate('/');
+    navigate("/");
   };
 
   const handleDataSaved = () => {
     // Dispatch custom event to trigger portfolio data refresh
-    window.dispatchEvent(new CustomEvent('portfolioUpdated'));
+    window.dispatchEvent(new CustomEvent("portfolioUpdated"));
     // Trigger local storage event for cross-tab synchronisation
-    localStorage.setItem('portfolio-update-timestamp', Date.now().toString());
+    localStorage.setItem("portfolio-update-timestamp", Date.now().toString());
   };
 
   if (loading) {
@@ -66,35 +74,57 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="admin-page">
+      <header className="admin-header">
+        <div className="page-width py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
+            <p className="eyebrow mb-3">Portfolio / Workspace</p>
             <h1 className="text-xl sm:text-2xl font-bold">Portfolio Admin</h1>
-            <p className="text-muted-foreground text-sm sm:text-base">Welcome back, Admin</p>
+            <p className="text-muted-foreground text-sm sm:text-base">
+              Welcome back, Admin
+            </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
-            <Button variant="outline" onClick={() => navigate('/')} className="w-full sm:w-auto text-sm">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/")}
+              className="w-full sm:w-auto text-sm"
+            >
               View Portfolio
             </Button>
-            <Button variant="destructive" onClick={handleLogout} className="w-full sm:w-auto text-sm">
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="w-full sm:w-auto text-sm"
+            >
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 sm:py-8">
-        <Tabs defaultValue="portfolio" className="space-y-4 sm:space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
-            <TabsTrigger value="portfolio" className="text-xs sm:text-sm">Portfolio Info</TabsTrigger>
-            <TabsTrigger value="projects" className="text-xs sm:text-sm">Projects</TabsTrigger>
-            <TabsTrigger value="skills" className="text-xs sm:text-sm">Skills</TabsTrigger>
-            <TabsTrigger value="contact" className="text-xs sm:text-sm">Contact</TabsTrigger>
+      <main className="page-width admin-main">
+        <Tabs defaultValue="portfolio" className="admin-workspace">
+          <TabsList className="admin-tabs" aria-label="Portfolio management">
+            <TabsTrigger value="portfolio" className="text-xs sm:text-sm">
+              Portfolio Info
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="text-xs sm:text-sm">
+              Projects
+            </TabsTrigger>
+            <TabsTrigger value="skills" className="text-xs sm:text-sm">
+              Skills
+            </TabsTrigger>
+            <TabsTrigger value="contact" className="text-xs sm:text-sm">
+              Contact
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="portfolio">
-            <PortfolioInfoForm userId={user?.id} onDataSaved={handleDataSaved} />
+            <PortfolioInfoForm
+              userId={user?.id}
+              onDataSaved={handleDataSaved}
+            />
           </TabsContent>
 
           <TabsContent value="projects">

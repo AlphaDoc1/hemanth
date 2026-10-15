@@ -6,15 +6,20 @@ import { Skills } from "@/components/Portfolio/Skills";
 import { Contact } from "@/components/Portfolio/Contact";
 import { Footer } from "@/components/Portfolio/Footer";
 import { usePortfolioData } from "@/hooks/usePortfolioData";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { PortfolioSkeleton } from "@/components/Portfolio/PortfolioSkeleton";
 
 const Index = () => {
-  const { portfolioInfo, projects, skills, contactInfo, loading, refetch } = usePortfolioData();
-  const navigate = useNavigate();
+  const main = useRef<HTMLElement>(null);
+  const {
+    portfolioInfo,
+    projects,
+    skills,
+    contactInfo,
+    loading,
+    refetch,
+    source,
+  } = usePortfolioData();
 
   useEffect(() => {
     const handlePortfolioUpdate = () => {
@@ -22,12 +27,12 @@ const Index = () => {
     };
 
     // Listen for portfolio updates
-    window.addEventListener('portfolioUpdated', handlePortfolioUpdate);
-    window.addEventListener('storage', handlePortfolioUpdate);
+    window.addEventListener("portfolioUpdated", handlePortfolioUpdate);
+    window.addEventListener("storage", handlePortfolioUpdate);
 
     return () => {
-      window.removeEventListener('portfolioUpdated', handlePortfolioUpdate);
-      window.removeEventListener('storage', handlePortfolioUpdate);
+      window.removeEventListener("portfolioUpdated", handlePortfolioUpdate);
+      window.removeEventListener("storage", handlePortfolioUpdate);
     };
   }, [refetch]);
 
@@ -38,24 +43,77 @@ const Index = () => {
     }
   }, [portfolioInfo?.website_name]);
 
+  useEffect(() => {
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !window.IntersectionObserver
+    )
+      return;
+    const animations = new Set<Animation>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const animation = entry.target.animate(
+            [
+              { opacity: 0, transform: "translateY(12px)" },
+              { opacity: 1, transform: "translateY(0)" },
+            ],
+            { duration: 450, easing: "cubic-bezier(.2,.65,.3,1)" },
+          );
+          animations.add(animation);
+          animation.onfinish = () => animations.delete(animation);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.08 },
+    );
+    main.current
+      ?.querySelectorAll(
+        ".section-heading, .project-study, .skill-category, .journey, .contact-form",
+      )
+      .forEach((element) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      animations.forEach((animation) => animation.cancel());
+    };
+  }, [portfolioInfo, projects, skills]);
+
   if (loading) {
     return <PortfolioSkeleton />;
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Admin Access Button - Stealth Mode */}
-      {/* Mobile: Bottom Left, Desktop: Top Left */}
-      <div className="fixed bottom-4 left-4 md:bottom-auto md:top-4 z-[60] pointer-events-auto opacity-10 hover:opacity-100 transition-opacity duration-300">
-        <Button onClick={() => navigate('/auth')} variant="ghost" size="sm" className="bg-transparent hover:bg-background/80 text-foreground/50 hover:text-foreground">
-          <User className="h-4 w-4" />
-        </Button>
-      </div>
-
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <Navigation websiteName={portfolioInfo?.website_name} />
-      <main>
+      <main id="main-content" tabIndex={-1} ref={main}>
+        {source !== "live" && (
+          <div className="portfolio-notice page-width" role="status">
+            <span className="eyebrow">
+              {source === "loading" ? "Loading portfolio" : "Frontend preview"}
+            </span>
+            <p>
+              {source === "loading"
+                ? "Loading your saved portfolio. Preview content is shown below."
+                : source === "unavailable"
+                  ? "Saved portfolio data is temporarily unavailable. Preview content is shown below."
+                  : "Preview content is shown below. Your saved portfolio loads automatically when Supabase is configured."}
+            </p>
+            {source === "unavailable" && (
+              <button className="text-action" onClick={() => void refetch()}>
+                Try again ↗
+              </button>
+            )}
+          </div>
+        )}
         <Hero
-          key={(portfolioInfo?.updated_at || 'hero') + (portfolioInfo?.hero_subtitle || '')}
+          key={
+            (portfolioInfo?.updated_at || "hero") +
+            (portfolioInfo?.hero_subtitle || "")
+          }
           data={portfolioInfo}
           contact={contactInfo}
         />
