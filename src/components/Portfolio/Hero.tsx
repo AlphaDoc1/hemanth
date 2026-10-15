@@ -1,4 +1,3 @@
-import { SpatialScene } from "./SpatialScene";
 import { Github, Linkedin, Mail, ArrowUpRight, ArrowDown } from "lucide-react";
 
 interface HeroProps {
@@ -25,6 +24,7 @@ export const Hero = ({ data, contact }: HeroProps) => {
   const normalizeUrl = (url?: string) =>
     !url ? undefined : /^https?:\/\//.test(url) ? url : `https://${url}`;
   const title = data?.hero_title || "Creative Developer";
+  const portrait = data?.profile_image_url || data?.hero_image_url;
   const words = title.split(" ");
   const lastWord = words.pop();
   return (
@@ -40,16 +40,10 @@ export const Hero = ({ data, contact }: HeroProps) => {
           <i aria-hidden="true" /> Available for work
         </span>
       </div>
-      <div className="hero-layout">
+      <div
+        className={`hero-layout${portrait ? " hero-with-portrait" : " hero-without-portrait"}`}
+      >
         <div className="hero-copy">
-          {(data?.profile_image_url || data?.hero_image_url) && (
-            <img
-              className="hero-avatar"
-              src={data.profile_image_url || data.hero_image_url}
-              alt="Profile portrait"
-              fetchPriority="high"
-            />
-          )}
           <h1>
             {words.join(" ")}
             {words.length > 0 && " "}
@@ -99,7 +93,16 @@ export const Hero = ({ data, contact }: HeroProps) => {
             </div>
           </div>
         </div>
-        <SpatialScene />
+        {portrait && (
+          <figure className="hero-portrait">
+            <img
+              src={portrait}
+              alt="Profile portrait"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </figure>
+        )}
       </div>
       <div className="hero-bottom">
         <span className="hero-location">
