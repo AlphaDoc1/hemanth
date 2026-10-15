@@ -638,3 +638,29 @@
     scroll-behavior: auto !important;
   }
 }
+/* Spatial palette */
+:root {
+  --background: 250 30% 97%;
+  --foreground: 250 23% 17%;
+  --card: 0 0% 100%;
+  --card-foreground: 250 23% 17%;
+  --primary: 258 61% 46%;
+  --primary-foreground: 0 0% 100%;
+  --muted: 250 25% 93%;
+  --muted-foreground: 250 10% 43%;
+  --border: 250 19% 86%;
+  --ring: 258 61% 46%;
+  --radius: 1rem;
+}
+:root.dark {
+  --background: 250 18% 9%;
+  --foreground: 250 20% 94%;
+  --card: 250 18% 13%;
+  --card-foreground: 250 20% 94%;
+  --primary: 264 90% 80%;
+  --primary-foreground: 250 30% 15%;
+  --muted: 250 17% 17%;
+  --muted-foreground: 250 14% 70%;
+  --border: 250 14% 26%;
+  --ring: 264 90% 80%;
+}

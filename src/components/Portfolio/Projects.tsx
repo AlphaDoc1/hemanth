@@ -12,7 +12,6 @@ interface Project {
   demo_url?: string;
 }
 export const Projects = ({ data = [] }: { data?: Project[] }) => {
-  const [expanded, setExpanded] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [filter, setFilter] = useState<string | null>(null);
@@ -32,7 +31,11 @@ export const Projects = ({ data = [] }: { data?: Project[] }) => {
     : data;
   return (
     <section id="projects" className="portfolio-section page-width">
-      <SectionHeading number="01" label="Selected work" title="Selected builds">
+      <SectionHeading
+        number="01"
+        label="Selected work"
+        title="Ideas, made real."
+      >
         Exploring innovative solutions through code, design, and engineering
         excellence.
       </SectionHeading>
@@ -46,7 +49,6 @@ export const Projects = ({ data = [] }: { data?: Project[] }) => {
               aria-pressed={!activeFilter}
               onClick={() => {
                 setFilter(null);
-                setExpanded(null);
                 setShowAll(false);
               }}
             >
@@ -58,7 +60,6 @@ export const Projects = ({ data = [] }: { data?: Project[] }) => {
                 aria-pressed={activeFilter === tech}
                 onClick={() => {
                   setFilter(tech);
-                  setExpanded(null);
                   setShowAll(false);
                 }}
               >
@@ -82,84 +83,52 @@ export const Projects = ({ data = [] }: { data?: Project[] }) => {
               id={`project-${project.id}`}
               className={`project-study ${index === 0 ? "project-featured" : ""}`}
             >
-              <button
-                className="project-selector"
-                aria-expanded={
-                  expanded === project.id || (expanded === null && index === 0)
-                }
-                aria-controls={`detail-${project.id}`}
-                onClick={() =>
-                  setExpanded(
-                    expanded === project.id ||
-                      (expanded === null && index === 0)
-                      ? ""
-                      : project.id,
-                  )
-                }
-              >
-                <span className="eyebrow">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span>{project.title}</span>
-                <ArrowUpRight size={24} />
-              </button>
-              <div
-                id={`detail-${project.id}`}
-                className="project-detail"
-                hidden={
-                  !(
-                    expanded === project.id ||
-                    (expanded === null && index === 0)
-                  )
-                }
-              >
-                <div className="project-visual">
-                  <ProjectArtwork
-                    title={project.title}
-                    technologies={project.technologies}
-                    image={project.image_url}
-                    variant={index}
-                  />
+              <div className="project-visual">
+                <ProjectArtwork
+                  title={project.title}
+                  technologies={project.technologies}
+                  image={project.image_url}
+                  variant={index}
+                />
+              </div>
+              <div className="project-copy">
+                <div className="project-kicker">
+                  <span className="eyebrow">
+                    {index === 0 ? "In focus" : "Selected project"}
+                  </span>
+                  <span className="eyebrow">
+                    /{String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <div className="project-copy">
-                  <div className="project-kicker">
-                    <span className="eyebrow">
-                      {index === 0 ? "In focus" : "Selected project"}
-                    </span>
-                    <span className="eyebrow">
-                      /{String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h3>{project.title}</h3>
-                  <p className="project-description">{project.description}</p>
-                  <div className="tech-tags">
-                    {(project.technologies || []).map((tech, i) => (
-                      <span key={i}>{tech}</span>
-                    ))}
-                  </div>
-                  <div className="project-links">
-                    {project.github_url && (
-                      <a
-                        href={project.github_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`View ${project.title} on GitHub`}
-                      >
-                        <Github size={15} /> Source code{" "}
-                        <ArrowUpRight size={15} />
-                      </a>
-                    )}
-                    {project.demo_url && (
-                      <a
-                        href={project.demo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`View ${project.title} live demo`}
-                      >
-                        Live project <ArrowUpRight size={15} />
-                      </a>
-                    )}
-                  </div>
+                <h3>{project.title}</h3>
+                <p className="project-description">{project.description}</p>
+                <div className="tech-tags">
+                  {(project.technologies || []).map((tech, i) => (
+                    <span key={i}>{tech}</span>
+                  ))}
+                </div>
+                <div className="project-links">
+                  {project.github_url && (
+                    <a
+                      href={project.github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${project.title} on GitHub`}
+                    >
+                      <Github size={15} /> Source code{" "}
+                      <ArrowUpRight size={15} />
+                    </a>
+                  )}
+                  {project.demo_url && (
+                    <a
+                      href={project.demo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${project.title} live demo`}
+                    >
+                      Live project <ArrowUpRight size={15} />
+                    </a>
+                  )}
                 </div>
               </div>
             </article>

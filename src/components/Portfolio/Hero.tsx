@@ -1,3 +1,4 @@
+import { SpatialScene } from "./SpatialScene";
 import { Github, Linkedin, Mail, ArrowUpRight, ArrowDown } from "lucide-react";
 
 interface HeroProps {
@@ -33,7 +34,7 @@ export const Hero = ({ data, contact }: HeroProps) => {
           <span className="small-star" aria-hidden="true">
             ↳
           </span>{" "}
-          Independent developer / Portfolio
+          Code. Curiosity. A little imagination.
         </span>
         <span className="availability">
           <i aria-hidden="true" /> Available for work
@@ -98,26 +99,7 @@ export const Hero = ({ data, contact }: HeroProps) => {
             </div>
           </div>
         </div>
-        <div className="studio-object" aria-hidden="true">
-          <svg viewBox="0 0 500 500" fill="none">
-            <circle cx="250" cy="250" r="185" />
-            {[0, 30, 60, 90, 120, 150].map((angle) => (
-              <ellipse
-                key={angle}
-                cx="250"
-                cy="250"
-                rx="185"
-                ry="65"
-                transform={`rotate(${angle} 250 250)`}
-              />
-            ))}
-            <circle cx="250" cy="250" r="125" strokeDasharray="2 9" />
-            <path d="M250 20V70M250 430V480M20 250H70M430 250H480" />
-          </svg>
-          <span className="object-label">
-            SYSTEMS / INTERFACES / INTELLIGENCE
-          </span>
-        </div>
+        <SpatialScene />
       </div>
       <div className="hero-bottom">
         <span className="hero-location">

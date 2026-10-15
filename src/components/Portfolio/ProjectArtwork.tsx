@@ -22,25 +22,60 @@ export function ProjectArtwork({
   return (
     <div className={`project-art art-${variant % 3}`} aria-hidden="true">
       <span className="art-caption">
-        {technologies.slice(0, 2).join(" / ") || "Software engineering"}
+        CONCEPT / {String(variant + 1).padStart(2, "0")}
       </span>
-      <svg viewBox="0 0 600 360" fill="none">
-        <g transform="translate(300 180)">
-          {Array.from({ length: 12 }, (_, i) => (
-            <rect
-              key={i}
-              x={-105 + i * 3}
-              y={-105 + i * 3}
-              width={210 - i * 6}
-              height={210 - i * 6}
-              rx={variant % 3 === 1 ? 70 : 4}
-              transform={`rotate(${i * 8})`}
-            />
-          ))}
-        </g>
-      </svg>
+      <div className="cover-scene">
+        {variant % 3 === 0 ? (
+          <div className="cover-browser">
+            <div className="cover-chrome">
+              <i />
+              <i />
+              <i />
+              <span>Design meets engineering</span>
+            </div>
+            <div className="cover-browser-body">
+              <div className="cover-orbit" />
+              <div className="cover-type">
+                Built to
+                <br />
+                <strong>work better.</strong>
+              </div>
+              <div className="cover-pill">Explore the possibilities ↗</div>
+            </div>
+          </div>
+        ) : variant % 3 === 1 ? (
+          <div className="cover-phone">
+            <div className="phone-speaker" />
+            <span className="phone-greeting">Make room for</span>
+            <strong>
+              good
+              <br />
+              ideas.
+            </strong>
+            <div className="phone-shapes">
+              <i />
+              <i />
+              <i />
+            </div>
+            <span className="phone-button">Let’s get started ↗</span>
+          </div>
+        ) : (
+          <div className="cover-stack">
+            <div />
+            <div />
+            <div>
+              <span>✳</span>
+              <strong>
+                Think beyond
+                <br />
+                the ordinary.
+              </strong>
+            </div>
+          </div>
+        )}
+      </div>
       <span className="art-index">
-        {String(variant + 1).padStart(2, "0")} / PROJECT STUDY
+        {technologies.slice(0, 2).join(" + ")} · Illustration
       </span>
     </div>
   );

@@ -18,9 +18,9 @@ const queryClient = new QueryClient();
 const App = () => (
   <ThemeProvider
     attribute="class"
-    defaultTheme="dark"
+    defaultTheme="light"
     enableSystem={false}
-    storageKey="portfolio-theme"
+    storageKey="portfolio-spatial-theme"
     disableTransitionOnChange
   >
     <QueryClientProvider client={queryClient}>
