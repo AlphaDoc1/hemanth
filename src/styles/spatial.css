@@ -890,31 +890,47 @@
   color: #604080;
 }
 
-/* The saved portrait takes the place of the decorative 3D scene. */
+/* A natural-ratio portrait with a restrained offset backdrop. */
 .hero-with-portrait {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 64px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
 }
 .hero-portrait {
-  width: 100%;
-  max-width: 480px;
+  position: relative;
+  isolation: isolate;
+  width: calc(100% - 20px);
+  max-width: 440px;
   justify-self: end;
-  margin: 0;
-  padding: 12px;
-  border: 1px solid hsl(var(--border));
-  border-radius: 32px;
-  background: hsl(var(--card));
-  box-shadow: 0 20px 50px hsl(var(--primary) / 0.1);
+  margin: 0 0 20px 20px;
+}
+.hero-portrait::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 36px 24px -20px -20px;
+  border-radius: 28px;
+  background: hsl(var(--primary) / 0.1);
+}
+.hero-portrait::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -12px;
+  right: -12px;
+  width: 72px;
+  height: 72px;
+  border-top: 1px solid hsl(var(--primary) / 0.4);
+  border-right: 1px solid hsl(var(--primary) / 0.4);
+  border-radius: 0 32px 0 0;
 }
 .hero-portrait img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 560px;
-  aspect-ratio: 4 / 5;
+  max-height: 540px;
   object-fit: contain;
   border-radius: 22px;
-  background: hsl(var(--muted));
 }
 .hero-without-portrait {
   grid-template-columns: minmax(0, 1fr);
@@ -924,33 +940,39 @@
 .hero-without-portrait .hero-copy {
   max-width: 760px;
 }
-@media (max-width: 1000px) {
-  .hero-with-portrait {
-    gap: 36px;
-  }
-}
 @media (max-width: 799px) {
   .hero-with-portrait {
     grid-template-columns: minmax(0, 1fr);
-    gap: 36px;
+    gap: 44px;
   }
   .hero-portrait {
     justify-self: center;
-    max-width: 420px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    margin: 0 0 20px;
   }
 }
 @media (max-width: 599px) {
   .hero-portrait {
-    max-width: 360px;
-    padding: 8px;
-    border-radius: 24px;
+    max-width: 340px;
   }
   .hero-portrait img {
-    border-radius: 17px;
-    max-height: 430px;
+    max-height: 440px;
+    border-radius: 18px;
+  }
+  .hero-portrait::before {
+    inset: 28px 20px -16px -16px;
+    border-radius: 22px;
+  }
+  .hero-portrait::after {
+    width: 54px;
+    height: 54px;
+    top: -10px;
+    right: -10px;
+    border-radius: 0 26px 0 0;
   }
   .hero-with-portrait {
-    gap: 32px;
-    padding-bottom: 28px;
+    gap: 40px;
+    padding-bottom: 24px;
   }
 }
