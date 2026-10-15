@@ -1,5 +1,6 @@
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "./ThemeToggle";
 const navigation = ["Home", "About", "Projects", "Skills", "Contact"];
 export const Navigation = ({ websiteName }: { websiteName?: string }) => {
   const [active, setActive] = useState("home");
@@ -42,20 +43,24 @@ export const Navigation = ({ websiteName }: { websiteName?: string }) => {
       <div className="page-width header-inner">
         <a className="wordmark" href="#home" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true">
-            /
+            {websiteName?.[0]?.toUpperCase() || "P"}
+            <span>.</span>
           </span>
           {websiteName || "Port."}
         </a>
-        <button
-          ref={toggle}
-          className="menu-toggle"
-          aria-label={open ? "Close navigation" : "Open navigation"}
-          aria-expanded={open}
-          aria-controls="main-navigation"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X /> : <Menu />}
-        </button>
+        <div className="header-controls">
+          <ThemeToggle />
+          <button
+            ref={toggle}
+            className="menu-toggle"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            aria-controls="main-navigation"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+        </div>
         <nav
           id="main-navigation"
           aria-label="Main navigation"

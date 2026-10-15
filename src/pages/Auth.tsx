@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/Portfolio/ThemeToggle";
 import { Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 
@@ -101,7 +102,10 @@ export default function Auth() {
         <Link to="/" className="text-action">
           ← Back to portfolio
         </Link>
-        <span className="eyebrow">Portfolio / Workspace</span>
+        <div className="flex items-center gap-4">
+          <span className="eyebrow">Portfolio / Workspace</span>
+          <ThemeToggle />
+        </div>
       </div>
       <div className="auth-layout">
         <div className="auth-intro">

@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail, ArrowUpRight, ArrowDown } from "lucide-react";
+import { ProjectArtwork } from "./ProjectArtwork";
 interface HeroProps {
   data?: {
     hero_title?: string;
@@ -10,116 +11,142 @@ interface HeroProps {
     email?: string;
     github_url?: string;
     linkedin_url?: string;
+    location?: string;
   } | null;
+  featuredProject?: {
+    id: string;
+    title: string;
+    image_url?: string;
+    technologies: string[];
+  };
 }
-
-export const Hero = ({ data, contact }: HeroProps) => {
+export const Hero = ({ data, contact, featuredProject }: HeroProps) => {
   const normalizeUrl = (url?: string) =>
     !url ? undefined : /^https?:\/\//.test(url) ? url : `https://${url}`;
+  const title = data?.hero_title || "Creative Developer";
+  const words = title.split(" ");
+  const lastWord = words.pop();
   return (
     <section id="home" className="hero page-width">
       <div className="hero-topline">
-        <span className="eyebrow">AI / ML & Software Development</span>
+        <span className="eyebrow">
+          <span className="small-star" aria-hidden="true">
+            ✳
+          </span>{" "}
+          Software development & AI / ML
+        </span>
         <span className="availability">
           <i aria-hidden="true" /> Available for work
         </span>
       </div>
       <div className="hero-layout">
         <div className="hero-copy">
+          {(data?.profile_image_url || data?.hero_image_url) && (
+            <img
+              className="hero-avatar"
+              src={data.profile_image_url || data.hero_image_url}
+              alt="Profile portrait"
+              fetchPriority="high"
+            />
+          )}
           <h1>
-            {data?.hero_title || "Creative Developer"}
-            <span className="accent">.</span>
+            {words.join(" ")}
+            {words.length > 0 && " "}
+            <span className="hero-title-end">
+              {lastWord}
+              <span className="hero-period">.</span>
+            </span>
           </h1>
           <p className="hero-subtitle">
-            {data
-              ? data.hero_subtitle
-              : "Building efficient, scalable systems."}
+            {data?.hero_subtitle || "Building efficient, scalable systems."}
           </p>
           <div className="hero-actions">
             <a className="action action-primary" href="#projects">
-              View Work <ArrowUpRight size={18} />
+              Explore my work <ArrowDown size={17} />
             </a>
-            <a className="action action-outline" href="#contact">
-              Contact Me <ArrowUpRight size={18} />
+            <a className="hero-contact-link" href="#contact">
+              Let's talk <ArrowUpRight size={17} />
             </a>
           </div>
-          <div className="social-links">
-            <a
-              href={normalizeUrl(contact?.github_url) || "https://github.com"}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github size={17} /> GitHub
-            </a>
-            <a
-              href={
-                normalizeUrl(contact?.linkedin_url) || "https://linkedin.com"
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Linkedin size={17} /> LinkedIn
-            </a>
-            <a href={`mailto:${contact?.email || "savanthhemanth@gmail.com"}`}>
-              <Mail size={17} /> Email
-            </a>
+          <div className="hero-social-row">
+            <span className="eyebrow">Find me on</span>
+            <div className="social-links">
+              <a
+                href={normalizeUrl(contact?.github_url) || "https://github.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
+                <Github size={18} />
+              </a>
+              <a
+                href={
+                  normalizeUrl(contact?.linkedin_url) || "https://linkedin.com"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={18} />
+              </a>
+              <a
+                href={`mailto:${contact?.email || "savanthhemanth@gmail.com"}`}
+                aria-label="Email"
+              >
+                <Mail size={18} />
+              </a>
+            </div>
           </div>
         </div>
-        <figure
-          className={
-            data?.profile_image_url
-              ? "hero-portrait has-portrait"
-              : "hero-portrait"
-          }
-        >
-          <div className="portrait-frame">
-            {data?.profile_image_url ? (
-              <img
-                src={data.profile_image_url}
-                alt={
-                  data.hero_title
-                    ? `Portrait of ${data.hero_title}`
-                    : "Profile portrait"
-                }
-                fetchPriority="high"
-              />
-            ) : (
-              <div className="engineering-board" aria-hidden="true">
-                <div className="board-top">
-                  <span>Engineering perspective</span>
-                  <span>↗</span>
-                </div>
-                <div className="board-statement">
-                  Ideas into
-                  <br />
-                  <span>working</span>
-                  <br />
-                  software.
-                </div>
-                <div className="board-system">
-                  <span className="system-node">Engineering</span>
-                  <span className="system-connector" />
-                  <span className="system-node">Design</span>
-                  <span className="system-connector" />
-                  <span className="system-node">Execution</span>
-                </div>
-                <div className="board-bottom">
-                  <span>Thoughtfully designed.</span>
-                  <span>Carefully built.</span>
-                </div>
+        {featuredProject ? (
+          <a
+            className="hero-feature"
+            href={`#project-${featuredProject.id}`}
+            aria-label={`Explore ${featuredProject.title}`}
+          >
+            <div className="hero-feature-top">
+              <span className="eyebrow">From the workbench</span>
+              <ArrowUpRight size={18} />
+            </div>
+            <ProjectArtwork
+              title={featuredProject.title}
+              technologies={featuredProject.technologies}
+              image={featuredProject.image_url}
+            />
+            <div className="hero-feature-caption">
+              <div>
+                <span className="eyebrow">Selected project / 01</span>
+                <h2>{featuredProject.title}</h2>
               </div>
-            )}
+              <span className="round-arrow">
+                <ArrowUpRight size={21} />
+              </span>
+            </div>
+          </a>
+        ) : (
+          <div className="hero-empty-feature">
+            <span className="eyebrow">The approach</span>
+            <p>
+              Thoughtful systems.
+              <br />
+              Useful software.
+            </p>
+            <a className="text-action" href="#about">
+              More about me <ArrowUpRight size={18} />
+            </a>
           </div>
-          <figcaption>
-            <span>Engineering. Design. Execution.</span>
-            <span aria-hidden="true">↗</span>
-          </figcaption>
-        </figure>
+        )}
       </div>
-      <a href="#about" className="hero-bottom">
-        <span className="eyebrow">Explore the portfolio</span>
-        <ArrowDown size={18} />
-      </a>
+      <div className="hero-bottom">
+        <span className="hero-location">
+          {contact?.location || "Bengaluru, Whitefield"}
+          <span>Open to meaningful collaborations</span>
+        </span>
+        <a href="#about">
+          <span className="eyebrow">A little more about me</span>
+          <ArrowDown size={17} />
+        </a>
+      </div>
     </section>
   );
 };

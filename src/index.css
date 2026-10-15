@@ -2,51 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Graphite, warm paper, and sage. Shared by the portfolio and workspace. */
+@font-face {
+  font-family: Manrope;
+  src: url("/fonts/manrope-latin-wght-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 @layer base {
   :root {
-    color-scheme: dark;
-    --background: 160 6% 7%;
-    --foreground: 45 14% 92%;
-    --card: 160 5% 10%;
-    --card-foreground: 45 14% 92%;
-    --popover: 160 5% 12%;
-    --popover-foreground: 45 14% 92%;
-    --primary: 140 18% 72%;
-    --primary-foreground: 160 12% 9%;
-    --secondary: 160 5% 16%;
-    --secondary-foreground: 45 14% 92%;
-    --muted: 160 5% 15%;
-    --muted-foreground: 130 3% 65%;
-    --accent: 160 7% 19%;
-    --accent-foreground: 45 14% 92%;
-    --destructive: 0 58% 43%;
+    color-scheme: light;
+    --background: 42 29% 95%;
+    --foreground: 60 5% 14%;
+    --card: 45 25% 98%;
+    --card-foreground: 60 5% 14%;
+    --popover: 45 25% 98%;
+    --popover-foreground: 60 5% 14%;
+    --primary: 14 60% 37%;
+    --primary-foreground: 40 30% 98%;
+    --secondary: 42 13% 89%;
+    --secondary-foreground: 60 5% 14%;
+    --muted: 42 13% 90%;
+    --muted-foreground: 55 4% 39%;
+    --accent: 30 17% 88%;
+    --accent-foreground: 60 5% 14%;
+    --destructive: 0 62% 43%;
     --destructive-foreground: 0 0% 100%;
-    --border: 140 4% 22%;
-    --input: 140 4% 28%;
-    --ring: 140 18% 72%;
-    --radius: 0.4rem;
-    --sidebar-background: 160 5% 10%;
-    --sidebar-foreground: 45 14% 92%;
-    --sidebar-primary: 140 18% 72%;
-    --sidebar-primary-foreground: 160 12% 9%;
-    --sidebar-accent: 160 7% 19%;
-    --sidebar-accent-foreground: 45 14% 92%;
-    --sidebar-border: 140 4% 22%;
-    --sidebar-ring: 140 18% 72%;
+    --border: 45 10% 80%;
+    --input: 45 8% 68%;
+    --ring: 14 60% 37%;
+    --radius: 0.55rem;
+    --sidebar-background: 45 25% 98%;
+    --sidebar-foreground: 60 5% 14%;
+    --sidebar-primary: 14 60% 37%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 30 17% 88%;
+    --sidebar-accent-foreground: 60 5% 14%;
+    --sidebar-border: 45 10% 80%;
+    --sidebar-ring: 14 60% 37%;
+  }
+  :root.dark {
+    color-scheme: dark;
+    --background: 45 5% 9%;
+    --foreground: 42 20% 90%;
+    --card: 45 5% 12%;
+    --card-foreground: 42 20% 90%;
+    --popover: 45 5% 14%;
+    --popover-foreground: 42 20% 90%;
+    --primary: 20 53% 70%;
+    --primary-foreground: 30 15% 10%;
+    --secondary: 45 5% 18%;
+    --secondary-foreground: 42 20% 90%;
+    --muted: 45 5% 17%;
+    --muted-foreground: 42 7% 67%;
+    --accent: 30 9% 21%;
+    --accent-foreground: 42 20% 90%;
+    --border: 45 5% 25%;
+    --input: 45 5% 37%;
+    --ring: 20 53% 70%;
+    --sidebar-background: 45 5% 12%;
+    --sidebar-foreground: 42 20% 90%;
+    --sidebar-primary: 20 53% 70%;
+    --sidebar-primary-foreground: 30 15% 10%;
+    --sidebar-accent: 30 9% 21%;
+    --sidebar-accent-foreground: 42 20% 90%;
+    --sidebar-border: 45 5% 25%;
+    --sidebar-ring: 20 53% 70%;
   }
   * {
     @apply border-border;
   }
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 100px;
+    scroll-padding-top: 105px;
   }
   body {
     @apply bg-background text-foreground antialiased;
     margin: 0;
-    font-family: "Inter", system-ui, sans-serif;
-    font-feature-settings: "cv11", "ss01";
+    font-family: Manrope, system-ui, sans-serif;
+    font-feature-settings: "ss01";
   }
   ::selection {
     background: hsl(var(--primary));
@@ -56,29 +97,24 @@
   h2,
   h3,
   h4 {
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: -0.045em;
     text-wrap: balance;
   }
   p {
-    line-height: 1.75;
-  }
-  a,
-  button,
-  input,
-  textarea {
-    -webkit-tap-highlight-color: transparent;
+    line-height: 1.8;
   }
   a,
   button {
+    -webkit-tap-highlight-color: transparent;
     transition:
-      color 0.18s,
-      background-color 0.18s,
-      border-color 0.18s,
-      transform 0.18s;
+      color 0.2s,
+      background-color 0.2s,
+      border-color 0.2s,
+      transform 0.2s;
   }
   :focus-visible {
-    outline: 2px solid hsl(var(--primary));
+    outline: 2px solid hsl(var(--ring));
     outline-offset: 5px;
   }
   input,
@@ -96,20 +132,17 @@
 }
 @layer components {
   .page-width {
-    width: min(1200px, calc(100% - 96px));
+    width: min(1184px, calc(100% - 96px));
     margin-inline: auto;
   }
   .eyebrow {
     font:
-      500 11px/1.6 ui-monospace,
-      SFMono-Regular,
-      Consolas,
+      400 10px/1.7 "IBM Plex Mono",
       monospace;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
   }
-  .eyebrow > span,
   .accent {
     color: hsl(var(--primary));
   }
@@ -121,50 +154,52 @@
     min-height: 48px;
     padding: 13px 22px;
     border: 1px solid transparent;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
   }
   .action-primary {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
   }
   .action-primary:hover {
-    background: hsl(140 18% 82%);
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
   .action-outline {
     border-color: hsl(var(--border));
     color: hsl(var(--foreground));
   }
   .action-outline:hover {
-    border-color: hsl(var(--primary));
     background: hsl(var(--card));
-  }
-  .action:hover svg {
-    transform: translate(2px, -2px);
+    border-color: hsl(var(--foreground));
   }
   .action svg {
     transition: transform 0.2s;
     flex-shrink: 0;
   }
+  .action:hover svg {
+    transform: translate(2px, -2px);
+  }
   .text-action {
     display: inline-flex;
-    align-items: center;
     gap: 12px;
-    font-size: 13px;
+    align-items: center;
     padding-block: 12px;
+    font-size: 12px;
+    font-weight: 600;
   }
   .text-action:hover {
     color: hsl(var(--primary));
   }
   .skip-link {
     position: fixed;
-    left: 20px;
     top: -100px;
+    left: 20px;
     z-index: 100;
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
     padding: 14px;
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
   }
   .skip-link:focus {
     top: 16px;
@@ -177,225 +212,158 @@
     border-bottom: 1px solid hsl(var(--border));
   }
   .header-inner {
-    min-height: 80px;
+    min-height: 88px;
     display: flex;
-    justify-content: space-between;
-    gap: 32px;
     align-items: center;
+    gap: 32px;
   }
   .wordmark {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.05em;
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
     min-width: 0;
+    margin-right: auto;
+    font-weight: 750;
+    font-size: 17px;
+    letter-spacing: -0.05em;
     overflow-wrap: anywhere;
   }
   .brand-mark {
-    color: hsl(var(--primary));
-    font:
-      28px ui-monospace,
-      monospace;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    padding: 3px 9px 5px;
+    background: hsl(var(--foreground));
+    color: hsl(var(--background));
+    border-radius: 7px;
+    font-size: 23px;
+    letter-spacing: -0.09em;
+  }
+  .brand-mark > span {
+    color: #df9b78;
   }
   .main-nav {
     display: flex;
-    gap: 27px;
     align-items: center;
-    flex-shrink: 0;
+    gap: 24px;
+    order: 2;
   }
   .main-nav a {
-    font-size: 12px;
-    color: hsl(var(--muted-foreground));
     padding-block: 12px;
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    position: relative;
   }
   .main-nav a:hover,
   .main-nav a[aria-current] {
     color: hsl(var(--foreground));
   }
-  .main-nav a[aria-current] {
-    text-decoration: underline;
-    text-underline-offset: 8px;
-    text-decoration-color: hsl(var(--primary));
+  .main-nav a[aria-current]::after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    border-radius: 50%;
+    background: hsl(var(--primary));
   }
   .main-nav .nav-cta {
     display: flex;
     align-items: center;
-    gap: 12px;
-    color: hsl(var(--primary));
-    border-left: 1px solid hsl(var(--border));
-    padding-left: 26px;
+    gap: 9px;
+    border: 1px solid hsl(var(--border));
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: hsl(var(--foreground));
+  }
+  .header-controls {
+    display: flex;
+    gap: 10px;
+    order: 3;
+  }
+  .theme-toggle,
+  .menu-toggle {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(var(--border));
+    border-radius: 50%;
+  }
+  .theme-toggle:hover,
+  .menu-toggle:hover {
+    background: hsl(var(--muted));
   }
   .menu-toggle {
     display: none;
-    width: 44px;
-    height: 44px;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
   }
-  .availability {
-    display: inline-flex;
-    gap: 9px;
-    align-items: center;
-    color: hsl(var(--muted-foreground));
-    font-size: 11px;
-  }
-  .availability i {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: hsl(var(--primary));
-  }
-  .social-links {
+  .portfolio-notice {
     display: flex;
     flex-wrap: wrap;
-    gap: 26px;
-    margin-top: 36px;
-  }
-  .social-links a {
-    display: flex;
-    gap: 9px;
     align-items: center;
+    gap: 8px 18px;
+    padding-block: 10px;
+    border-bottom: 1px dashed hsl(var(--border));
+  }
+  .portfolio-notice p {
     color: hsl(var(--muted-foreground));
     font-size: 11px;
+    flex: 1 1 280px;
   }
-  .social-links a:hover {
-    color: hsl(var(--foreground));
-  }
-  .contact-section h2 {
-    font-size: clamp(34px, 4.2vw, 58px);
-    line-height: 1.12;
-  }
-  .contact-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 9%;
-    margin-top: 32px;
-  }
-  .contact-details {
-    margin-top: 40px;
-  }
-  .contact-details > div {
-    border-top: 1px solid hsl(var(--border));
-    padding-block: 17px;
-  }
-  .contact-details dt {
-    font:
-      10px ui-monospace,
-      monospace;
-    color: hsl(var(--muted-foreground));
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 7px;
-  }
-  .contact-details dd {
-    font-size: 14px;
-    overflow-wrap: anywhere;
-  }
-  .contact-details a {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .contact-details a:hover {
+  .portfolio-notice .eyebrow {
+    font-size: 9px;
     color: hsl(var(--primary));
-  }
-  .contact-form {
-    align-self: start;
-    padding: 32px;
-    border: 1px solid hsl(var(--border));
-    background: hsl(var(--card));
-    border-radius: 4px;
-  }
-  .form-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-  }
-  .form-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 24px;
-    min-width: 0;
-  }
-  .field label {
-    font-size: 12px;
-  }
-  .field input,
-  .field textarea {
-    width: 100%;
-    border: 1px solid hsl(var(--input));
-    background: hsl(var(--background));
-    border-radius: 3px;
-    padding: 12px;
-    font-size: 14px;
-  }
-  .field textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-  .field input::placeholder,
-  .field textarea::placeholder {
-    color: hsl(var(--muted-foreground));
-  }
-  .contact-form > button {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .form-status {
-    color: hsl(var(--primary));
-    font-size: 13px;
-  }
-  .form-status:not(:empty) {
-    margin-top: 20px;
   }
   .auth-page {
     min-height: 100svh;
+    max-width: 1400px;
+    margin: auto;
     padding: 32px 7%;
-    max-width: 1600px;
-    margin-inline: auto;
   }
   .auth-brand {
     display: flex;
     justify-content: space-between;
     gap: 24px;
     align-items: center;
-    padding-bottom: 24px;
     border-bottom: 1px solid hsl(var(--border));
+    padding-bottom: 24px;
   }
   .auth-layout {
+    min-height: 75svh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10%;
     align-items: center;
-    min-height: 75svh;
-    padding-block: 60px;
+    padding-block: 64px;
+  }
+  .auth-intro > .eyebrow {
+    color: hsl(var(--primary));
   }
   .auth-intro h1 {
-    font-size: clamp(40px, 4.5vw, 66px);
-    line-height: 1.1;
+    font-size: clamp(40px, 4.8vw, 66px);
+    line-height: 1.08;
+    letter-spacing: -0.055em;
     margin-block: 24px;
+  }
+  .auth-intro h1 .accent {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
   }
   .auth-intro > p:not(.eyebrow) {
     color: hsl(var(--muted-foreground));
     max-width: 380px;
-    font-size: 15px;
+    font-size: 14px;
   }
   .auth-index {
     display: block;
     color: hsl(var(--primary));
     font:
-      90px/1 ui-monospace,
-      monospace;
+      italic 100px/1 Georgia,
+      serif;
     margin-top: 40px;
   }
   .auth-card {
@@ -403,6 +371,7 @@
     width: 100%;
     justify-self: end;
     padding: 16px;
+    box-shadow: 0 16px 60px #24242006;
   }
   .auth-card form {
     padding-top: 16px;
@@ -411,8 +380,8 @@
     margin-top: 28px;
   }
   .admin-header {
-    background: hsl(var(--card));
     border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
   }
   .admin-main {
     padding-block: 40px 80px;
@@ -420,8 +389,8 @@
   .admin-workspace {
     display: grid;
     grid-template-columns: 190px minmax(0, 1fr);
-    align-items: start;
     gap: 40px;
+    align-items: start;
   }
   .admin-workspace .admin-tabs {
     display: flex;
@@ -440,7 +409,7 @@
     justify-content: flex-start;
     padding: 14px 18px;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 5px;
   }
   .admin-tabs [role="tab"][data-state="active"] {
     background: hsl(var(--card));
@@ -502,8 +471,9 @@
     gap: 28px;
   }
   .error-code {
+    font-family: Georgia, serif;
+    font-style: italic;
     font-size: clamp(100px, 23vw, 280px);
-    font-weight: 500;
     letter-spacing: -0.09em;
     line-height: 1;
     color: hsl(var(--primary));
@@ -518,13 +488,11 @@
     gap: 24px;
     align-items: center;
     justify-content: center;
-    background: hsl(var(--background));
   }
   .loader-line {
     width: 100px;
     height: 2px;
     background: hsl(var(--primary));
-    transform-origin: left;
     animation: loading-line 1.5s ease-in-out infinite;
   }
   .portfolio-loading .skeleton-header {
@@ -537,24 +505,8 @@
 }
 @keyframes loading-line {
   50% {
-    transform: scaleX(0.4);
     opacity: 0.4;
-  }
-}
-@keyframes enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .auth-layout,
-  .error-page {
-    animation: enter 0.65s ease both;
+    transform: scaleX(0.4);
   }
 }
 @media (max-width: 1050px) {
@@ -564,15 +516,8 @@
   .main-nav {
     gap: 18px;
   }
-  .contact-layout {
-    gap: 5%;
-  }
-  .contact-form {
-    padding: 24px;
-  }
-  .form-pair {
-    grid-template-columns: 1fr;
-    gap: 0;
+  .header-inner {
+    gap: 20px;
   }
   .admin-workspace {
     grid-template-columns: 160px minmax(0, 1fr);
@@ -581,7 +526,7 @@
 }
 @media (max-width: 799px) {
   .header-inner {
-    min-height: 70px;
+    min-height: 72px;
   }
   .menu-toggle {
     display: flex;
@@ -601,30 +546,23 @@
     padding: 20px 32px;
     background: hsl(var(--background));
     border-bottom: 1px solid hsl(var(--border));
-    box-shadow: 0 20px 30px #0003;
-    max-height: calc(100svh - 70px);
+    box-shadow: 0 24px 32px #0000000c;
+    max-height: calc(100svh - 72px);
     overflow-y: auto;
   }
   .main-nav.is-open a {
     min-height: 44px;
     font-size: 15px;
   }
+  .main-nav a[aria-current]::after {
+    left: auto;
+    right: 8px;
+    top: 22px;
+  }
   .main-nav .nav-cta {
-    border-left: none;
-    border-top: 1px solid hsl(var(--border));
-    padding: 16px 0 0;
-    margin-top: 12px;
-  }
-  .contact-layout {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .contact-section h2 {
-    max-width: 550px;
-  }
-  .form-pair {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    align-self: start;
+    padding-inline: 16px;
+    margin-top: 10px;
   }
   .auth-layout {
     gap: 40px;
@@ -650,29 +588,14 @@
   .page-width {
     width: calc(100% - 40px);
   }
-  .social-links {
-    gap: 24px;
-    margin-top: 28px;
-  }
-  .contact-section h2 {
-    font-size: 36px;
-  }
-  .contact-form {
-    padding: 24px 20px;
-  }
-  .form-pair {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .field input,
-  .field textarea {
-    font-size: 16px;
-  }
   .auth-page {
     padding: 24px 20px;
   }
+  .auth-brand {
+    gap: 12px;
+  }
   .auth-brand .eyebrow {
-    font-size: 9px;
+    display: none;
   }
   .auth-layout {
     grid-template-columns: 1fr;
@@ -693,12 +616,8 @@
   .admin-workspace .admin-tabs {
     grid-template-columns: 1fr 1fr;
   }
-  .manager-heading {
-    flex-wrap: wrap;
-  }
-  .admin-page .admin-project-header {
-    flex-wrap: wrap;
-  }
+  .manager-heading,
+  .admin-page .admin-project-header,
   .admin-skill-row {
     flex-wrap: wrap;
   }
@@ -718,22 +637,4 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Configuration-independent preview uses the same visual system. */
-.portfolio-notice {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 24px;
-  padding-block: 18px;
-  border-bottom: 1px solid hsl(var(--border));
-}
-.portfolio-notice p {
-  font-size: 12px;
-  color: hsl(var(--muted-foreground));
-  flex: 1 1 280px;
-}
-.portfolio-notice .eyebrow {
-  color: hsl(var(--primary));
 }

@@ -97,10 +97,10 @@ const Index = () => {
             </span>
             <p>
               {source === "loading"
-                ? "Loading your saved portfolio. Preview content is shown below."
+                ? "Loading your saved portfolio…"
                 : source === "unavailable"
-                  ? "Saved portfolio data is temporarily unavailable. Preview content is shown below."
-                  : "Preview content is shown below. Your saved portfolio loads automatically when Supabase is configured."}
+                  ? "Saved portfolio data is temporarily unavailable. Sample content is shown below."
+                  : "Sample content — explore the design and interactions."}
             </p>
             {source === "unavailable" && (
               <button className="text-action" onClick={() => void refetch()}>
@@ -116,6 +116,7 @@ const Index = () => {
           }
           data={portfolioInfo}
           contact={contactInfo}
+          featuredProject={projects[0]}
         />
         <About data={portfolioInfo} />
         <Projects data={projects} />
