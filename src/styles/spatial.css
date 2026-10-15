@@ -976,3 +976,117 @@
     padding-bottom: 24px;
   }
 }
+/* Compact mobile introduction: heading, portrait, description, actions. */
+@media (max-width: 599px) {
+  .hero {
+    padding-top: 12px;
+  }
+  .hero-topline {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .hero-topline > .eyebrow {
+    display: none;
+  }
+  .hero-topline .availability {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+  .hero-with-portrait {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 0 20px;
+    min-height: 0;
+  }
+  .hero-with-portrait .hero-copy {
+    display: contents;
+  }
+  .hero-with-portrait h1 {
+    order: 0;
+    font-size: clamp(32px, 5.5svh, 46px);
+    line-height: 1.05;
+    text-align: center;
+    width: 100%;
+    max-width: 360px;
+  }
+  .hero-with-portrait .hero-portrait {
+    order: 1;
+    flex-shrink: 0;
+    width: auto;
+    max-width: 75%;
+    margin: 2px 0 5px;
+    align-self: center;
+  }
+  .hero-with-portrait .hero-portrait img {
+    width: auto;
+    height: clamp(110px, 23svh, 200px);
+    max-width: 100%;
+    max-height: none;
+    object-fit: contain;
+    border-radius: 18px;
+  }
+  .hero-with-portrait .hero-portrait::before {
+    inset: 12px -8px -8px;
+    border-radius: 24px;
+    background: linear-gradient(
+      145deg,
+      hsl(var(--primary) / 0.16),
+      hsl(var(--primary) / 0.04)
+    );
+  }
+  .hero-with-portrait .hero-portrait::after {
+    top: -6px;
+    right: -6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 0 22px 0 0;
+  }
+  .hero-with-portrait .hero-subtitle {
+    order: 2;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+    margin: 0;
+    max-width: 320px;
+  }
+  .hero-with-portrait .hero-actions {
+    order: 3;
+    justify-content: center;
+    gap: 18px;
+    margin: 0;
+  }
+  .hero-with-portrait .hero-actions .action {
+    min-height: 40px;
+    padding: 10px 18px;
+    font-size: 11px;
+  }
+  .hero-with-portrait .hero-contact-link {
+    font-size: 11px;
+    padding: 8px 0;
+  }
+  .hero-with-portrait .hero-social-row {
+    order: 4;
+    margin: 0;
+    gap: 14px;
+  }
+  .hero-with-portrait .social-links a {
+    width: 30px;
+    height: 30px;
+  }
+  .hero:has(.hero-with-portrait) .hero-bottom {
+    display: none;
+  }
+}
+@media (max-width: 599px) and (max-height: 650px) {
+  .hero-with-portrait {
+    gap: 10px;
+    padding-block: 12px;
+  }
+  .hero-with-portrait .hero-portrait img {
+    height: 19svh;
+  }
+  .hero-with-portrait h1 {
+    font-size: 32px;
+  }
+}
